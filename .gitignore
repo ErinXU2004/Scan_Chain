@@ -1,0 +1,17 @@
+# Simulation artifacts
+*.fsdb
+*.log
+*.key
+csrc/
+simv
+simv.daidir/
+simv.vdb/
+verdiLog/
+novas_dump.log
+scan_data_out.txt
+.DS_Store
+.__afs*
+
+# Keep important documentation
+!Readme.txt
+!README.md
