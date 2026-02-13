@@ -16,12 +16,13 @@ module tb_test_scan;
     logic  scan_load_chip;
     logic  scan_load_chain;
 
-    // to sram - Changed: data width for SIMD engine
+    // to 128-bit SRAM - Segmented access interface
     logic sram_ren;
     logic sram_wen;
-    logic [15:0] sram_wdata;     // Changed: 32-bit -> 16-bit
-    logic [15:0] sram_rdata;     // Changed: 32-bit -> 16-bit
-    logic [10:0] sram_addr;
+    logic [3:0] sram_addr;       // 4-bit word address (16 words)
+    logic [2:0] sram_seg_sel;    // 3-bit segment select (8 segments)
+    logic [15:0] sram_wdata;     // 16-bit data segment
+    logic [15:0] sram_rdata;     // 16-bit data segment
     logic sram_ready;
     
     // to ctr - Simplified to single 16-bit register
@@ -32,22 +33,21 @@ module tb_test_scan;
     logic [15:0] ctr;            // Changed: single register
     logic ctr_ready;
     
-    // SIMD control signals - New for SIMD engine
-    logic [3:0] lane_id;         // Lane ID output
+    // SIMD control signal - I/D memory select
     logic id_sel;                // Instruction/Data select output
    
    // Clock generator
    clk_gen c1 (.clk(clk), .rst_n(rst_n));
 
-   // SRAM instance - Uses parameterized width (changed to 16-bit in spram.sv)
-   spram s1 (.clk(clk),
+   // 128-bit SRAM instance - Segmented access for scan chain
+   spram_128b s1 (.clk(clk),
                 .rst_n(rst_n), 
                 .wen(sram_wen),
                 .ren(sram_ren),
-                .waddr(sram_addr),
-                .raddr(sram_addr),
-                .wdata(sram_wdata), 
-                .rdata(sram_rdata), 
+                .addr(sram_addr),          // 4-bit word address
+                .seg_sel(sram_seg_sel),    // 3-bit segment select
+                .wdata(sram_wdata),        // 16-bit segment write
+                .rdata(sram_rdata),        // 16-bit segment read
                 .ready(sram_ready)); 
 
    // Test stimulus module
@@ -65,7 +65,7 @@ module tb_test_scan;
         .ctr_ready(ctr_ready)
     );
 
-   // Scan chain top module - Updated for SIMD engine
+   // Scan chain top module - Updated for 128-bit segmented SRAM
    scan_full sf1(
     .clk(clk),
     .rst_n(rst_n),
@@ -78,17 +78,17 @@ module tb_test_scan;
     .scan_load_chain(scan_load_chain),
     .sram_ren(sram_ren),
     .sram_wen(sram_wen),
+    .sram_addr(sram_addr),         // 4-bit word address
+    .sram_seg_sel(sram_seg_sel),   // 3-bit segment select
     .sram_wdata(sram_wdata),
     .sram_rdata(sram_rdata),
     .sram_ready(sram_ready),
-    .sram_addr(sram_addr),
     .ctr_ren(ctr_ren),
     .ctr_wen(ctr_wen),
-    .ctr_wdata(ctr_wdata),          // Changed: ctr1_wdata -> ctr_wdata
-    .ctr_rdata(ctr_rdata),          // Changed: ctr1_rdata -> ctr_rdata
+    .ctr_wdata(ctr_wdata),
+    .ctr_rdata(ctr_rdata),
     .ctr_ready(ctr_ready),
-    .lane_id(lane_id),              // Added: SIMD Lane ID
-    .id_sel(id_sel)                 // Added: Instruction/Data select
+    .id_sel(id_sel)                // I/D select signal
     );
 
    initial begin

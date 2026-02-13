@@ -12,12 +12,13 @@ module scan_full(
     input scan_load_chip,
     input scan_load_chain,
 
-    // To SRAM - Changed: data width for SIMD engine
+    // To 128-bit SRAM - Segmented access interface
     output reg sram_ren,
     output reg sram_wen,
-    output reg [10:0] sram_addr,   // Keep 11-bit SRAM address
-    output reg [15:0] sram_wdata,  // Changed: 32-bit -> 16-bit data
-    input [15:0] sram_rdata,       // Changed: 32-bit -> 16-bit data
+    output reg [3:0] sram_addr,    // 4-bit word address (16 words)
+    output reg [2:0] sram_seg_sel, // 3-bit segment select (8×16-bit segments)
+    output reg [15:0] sram_wdata,  // 16-bit data segment
+    input [15:0] sram_rdata,       // 16-bit data segment
     input sram_ready,
     
     // To control registers - Simplified to single 16-bit register
@@ -31,8 +32,7 @@ module scan_full(
     input stat_ready, 
     input reg [15:0] stat_rdata, 
     
-    // SIMD control signals - New outputs for SIMD engine
-    output reg [3:0] lane_id,      // Lane ID for SIMD vector operations
+    // SIMD control signal - I/D memory select
     output reg id_sel              // Instruction/Data memory select
 );
    // Internal wires between rwctr and scan - Changed: address and data width
@@ -64,20 +64,17 @@ module scan_full(
         .scan_ready(scan_ready),
         .sram_ren(sram_ren),
         .sram_wen(sram_wen),
+        .sram_addr(sram_addr),          // 4-bit word address
+        .sram_seg_sel(sram_seg_sel),    // 3-bit segment select
         .sram_wdata(sram_wdata),
         .sram_rdata(sram_rdata),
         .sram_ready(sram_ready),
-        .sram_addr(sram_addr),
         .ctr_ren(ctr_ren),
         .ctr_wen(ctr_wen),
-        .ctr_wdata(ctr_wdata),      // Changed: ctr1_wdata -> ctr_wdata
-        .ctr_rdata(ctr_rdata),      // Changed: ctr1_rdata -> ctr_rdata
+        .ctr_wdata(ctr_wdata),
+        .ctr_rdata(ctr_rdata),
         .ctr_ready(ctr_ready),
-        .stat_ready(stat_ready), // added status reg io
-        .stat_rdata(stat_rdata), // added status reg io
-        // New SIMD control signals
-        .lane_id(lane_id),          // Added: Lane ID output
-        .id_sel(id_sel)             // Added: Instruction/Data select output
+        .id_sel(id_sel)                 // I/D select output
     );
 
     // Instantiate rwctr - Read/Write controller with clock domain crossing
