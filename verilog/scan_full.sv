@@ -15,7 +15,7 @@ module scan_full(
     // To 128-bit SRAM - Segmented access interface
     output reg sram_ren,
     output reg sram_wen,
-    output reg [3:0] sram_addr,    // 4-bit word address (16 words)
+    output reg [10:0] sram_addr,   // 11-bit word address (2048 words)
     output reg [2:0] sram_seg_sel, // 3-bit segment select (8×16-bit segments)
     output reg [15:0] sram_wdata,  // 16-bit data segment
     input [15:0] sram_rdata,       // 16-bit data segment
@@ -64,7 +64,7 @@ module scan_full(
         .scan_ready(scan_ready),
         .sram_ren(sram_ren),
         .sram_wen(sram_wen),
-        .sram_addr(sram_addr),          // 4-bit word address
+        .sram_addr(sram_addr),          // 11-bit word address
         .sram_seg_sel(sram_seg_sel),    // 3-bit segment select
         .sram_wdata(sram_wdata),
         .sram_rdata(sram_rdata),

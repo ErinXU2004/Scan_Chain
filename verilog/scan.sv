@@ -44,12 +44,6 @@ wire [50:0] scan_next;    // Changed: 79 -> 51 bits
 
 always @* begin
     // Bit mapping for SIMD engine scan chain (51 bits total):
-    // [0:0]   - static_wen (write enable)
-    // [1:1]   - static_ren (read enable)  
-    // [17:2]  - static_addr (16-bit address: [17:7]=addr, [6:3]=lane_id, [2:2]=i/d_sel)
-    // [33:18] - static_wdata (16-bit write data)
-    // [49:34] - static_rdata (16-bit read data)
-    // [50:50] - static_ready (ready signal)
     
     scan_load[0:0] = static_wen;
     scan_load[1:1] = static_ren;

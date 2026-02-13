@@ -19,7 +19,7 @@ module tb_test_scan;
     // to 128-bit SRAM - Segmented access interface
     logic sram_ren;
     logic sram_wen;
-    logic [3:0] sram_addr;       // 4-bit word address (16 words)
+    logic [10:0] sram_addr;      // 11-bit word address (2048 words)
     logic [2:0] sram_seg_sel;    // 3-bit segment select (8 segments)
     logic [15:0] sram_wdata;     // 16-bit data segment
     logic [15:0] sram_rdata;     // 16-bit data segment
