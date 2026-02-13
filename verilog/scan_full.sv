@@ -26,6 +26,10 @@ module scan_full(
     output reg [15:0] ctr_wdata,   // Changed: split ctr1/ctr2 -> single 16-bit
     input [15:0] ctr_rdata,        // Changed: split ctr1/ctr2 -> single 16-bit
     input ctr_ready,
+
+    // to status register
+    input stat_ready, 
+    input reg [15:0] stat_rdata, 
     
     // SIMD control signals - New outputs for SIMD engine
     output reg [3:0] lane_id,      // Lane ID for SIMD vector operations
@@ -69,6 +73,8 @@ module scan_full(
         .ctr_wdata(ctr_wdata),      // Changed: ctr1_wdata -> ctr_wdata
         .ctr_rdata(ctr_rdata),      // Changed: ctr1_rdata -> ctr_rdata
         .ctr_ready(ctr_ready),
+        .stat_ready(stat_ready), // added status reg io
+        .stat_rdata(stat_rdata), // added status reg io
         // New SIMD control signals
         .lane_id(lane_id),          // Added: Lane ID output
         .id_sel(id_sel)             // Added: Instruction/Data select output

@@ -21,7 +21,7 @@ module rwctr(
    input  [15:0]  scan_rdata,      // Changed: 32-bit -> 16-bit data
    input  scan_ready
 
-);
+); 
 
    reg holding, holding_w;
    reg read_hold, read_hold_w;

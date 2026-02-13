@@ -20,17 +20,23 @@ module mem_reg_mux (
     input [15:0] sram_rdata,       // Changed: 32-bit -> 16-bit data
     input sram_ready,
     
-    // to registers - Simplified to single 16-bit register
+    // to ctrl registers - Simplified to single 16-bit register 
     output reg ctr_ren,
     output reg ctr_wen,
-    output reg [15:0] ctr_wdata,   // Changed: split registers -> single 16-bit
+    output reg [15:0] ctr_wdata,   // Changed: split registers -> single 16-bit 
     input  [15:0] ctr_rdata,       // Changed: split registers -> single 16-bit
     input  ctr_ready,
+
+    // to status register
+    input stat_ready, 
+    input reg [15:0] stat_rdata, 
     
     // SIMD control signals - New outputs for SIMD engine
     output reg [3:0] lane_id,      // Lane ID extracted from scan_addr[4:1]
     output reg id_sel              // Instruction/Data select from scan_addr[0]
 );
+
+    // TODO: add status register stuff
 
     // Extract SIMD control signals from address
     // scan_addr layout: [15]=SRAM/Reg, [14:5]=addr, [4:1]=lane_id, [0]=i/d_sel
